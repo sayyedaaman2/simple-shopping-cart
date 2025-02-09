@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+#root,body{
+  position: relative;
+  min-height: 100vh;
+}
