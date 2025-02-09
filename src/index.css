@@ -3,4 +3,5 @@
 #root,body{
   position: relative;
   min-height: 100vh;
+  margin-inline: 5rem;
 }

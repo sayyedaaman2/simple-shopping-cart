@@ -1,32 +1,38 @@
 import { useState } from "react"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
-import Button from "./Button";
+import Button from "../common/Button";
 import { faMinus } from "@fortawesome/free-solid-svg-icons";
+import { useCartQuery } from "../../hooks/queryClient";
 
-export default function ProductRow(){
-    const [quantity,setQuantity] = useState(0);
+export default function ProductRow({
+    id,
+    title,
+    price,
+    quantity,
+
+}){
+    const {increaseQuantity,decreaseQuantity} = useCartQuery();
+
     const incrementQuantity = ()=>{
-        setQuantity((prevQuantity)=> prevQuantity + 1);
+        increaseQuantity.mutate(id);
     }
     const decrementQuantity = ()=>{
-        if(quantity > 0){
-            setQuantity((prevQuantity)=> prevQuantity - 1);
-        }
+        decreaseQuantity.mutate(id);
     }
     return(
         <tr className="">
                 <td className="border border-gray-300 p-2">
-                Tea set (&#36;39.99)
+                {title} (&#36;{price})
                 </td>
-                <td className="border border-gray-300 p-2 flex justify-between items-center">
+                <td className="border border-gray-300 p-2  flex justify-between items-stretch">
                     <Button className={'border bg-slate-900 text-white h-2 w-2 flex justify-center items-center rounded-full p-3 cursor-pointer'}
                     onHandleClick={incrementQuantity}>
                        <FontAwesomeIcon icon={faPlus}/>
                     </Button>
-                    <span>
+                    <div>
                     {quantity}
-                    </span>
+                    </div>
                     <Button className={'border bg-slate-900 text-white h-2 w-2 flex justify-center items-center rounded-full p-3 cursor-pointer'}
                     onHandleClick={decrementQuantity}>
                     <FontAwesomeIcon icon={faMinus}/>
@@ -34,7 +40,9 @@ export default function ProductRow(){
                    
                 </td>
                 <td className="border border-gray-300 p-2">
-                &#36;39.99 
+                &#36;{
+                    (quantity * price).toFixed(2)
+                } 
                 </td>
             </tr>
     )
