@@ -3,5 +3,5 @@
 #root,body{
   position: relative;
   min-height: 100vh;
-  margin-inline: 5rem;
+  margin-inline: clamp(0.5rem,3vw,5rem);
 }

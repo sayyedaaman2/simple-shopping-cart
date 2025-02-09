@@ -1,67 +1,60 @@
-import { useMutation, useQuery as useReactQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation,useInfiniteQuery, useQuery as useReactQuery, useQueryClient, useQuery } from "@tanstack/react-query";
 import { decreaseProductCart, deleteCart, fetchCart, fetchProducts, getTotalCartValue, increaseProductCart, postCart } from "../api";
 
 export function useProductQuery() {
-    const queryClient = useQueryClient();
-
-    const query = useReactQuery({
-        queryKey: ['product'],
-        queryFn: fetchProducts
+    
+    return useInfiniteQuery({
+        queryKey : ["product"],
+        queryFn : fetchProducts,
+        initialPageParam: 0,
+        getNextPageParam: (_lastPage,pages)=> {
+            const totalProduct = Math.floor(pages[0].total /6);
+            if(pages.length < totalProduct ){
+                return pages.length + 1;
+            }else{
+                return undefined;
+            }
+        }
     });
-    // const mutation = useMutation({
-    //     mutationFn: fetchProducts, // add post method
-    //     onSuccess: () => {
-    //         queryClient.invalidateQueries({ queryKey: ['product'] });
-    //     },
-    // });
-    return {
-
-        queryClient, query
-    }
 }
-
-export function useCartQuery() {
+export function useCartQuery(){
+    return useQuery({
+        queryKey : ['cart'],
+        queryFn : fetchCart
+    })
+}
+export function useCartTotalProductQuery(){
+    return useQuery({
+        queryKey : ['cart-total'],
+        queryFn : getTotalCartValue
+    })
+}
+export function useAddCart(){
     const queryClient = useQueryClient();
 
-    const query = useReactQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCart
-    });
-    const addCart = useMutation({
-        mutationFn: postCart, 
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
-        },
-    });
-
-    const increaseQuantity = useMutation({
-        mutationFn:increaseProductCart,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
-        },
-    });
-
-    const decreaseQuantity = useMutation({
-        mutationFn: decreaseProductCart,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
-        },
-    });
-    const getTotal = useMutation({
-        mutationFn : getTotalCartValue,
-        onSuccess : ()=>{
-            queryClient.invalidateQueries({queryKey : ['cart']})
+    return useMutation({
+        mutationFn : postCart,
+        onSuccess: ()=>{
+            queryClient.invalidateQueries('cart')
         }
     })
+}
+export function useIncrementCart(){
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn : increaseProductCart,
+        onSuccess: ()=>{
+            queryClient.invalidateQueries('cart')
+        }
+    })
+}
+export function useDecrementCart(){
+    const queryClient = useQueryClient();
 
-    const deleteItem = useMutation({
-        mutationFn: deleteCart,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] });
-        },
-    });
-    return {
-
-        queryClient, query, addCart,increaseQuantity,decreaseQuantity,deleteItem,getTotal
-    }
+    return useMutation({
+        mutationFn : decreaseProductCart,
+        onSuccess: ()=>{
+            queryClient.invalidateQueries('cart')
+        }
+    })
 }

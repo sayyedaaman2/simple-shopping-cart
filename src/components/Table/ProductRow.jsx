@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 import Button from "../common/Button";
 import { faMinus } from "@fortawesome/free-solid-svg-icons";
-import { useCartQuery } from "../../hooks/queryClient";
+import { useCartQuery, useDecrementCart, useIncrementCart } from "../../hooks/queryClient";
 
 export default function ProductRow({
     id,
@@ -12,13 +12,14 @@ export default function ProductRow({
     quantity,
 
 }){
-    const {increaseQuantity,decreaseQuantity} = useCartQuery();
+    const {mutate:IncrementProduct} = useIncrementCart();
+    const {mutate:DecrementProduct} = useDecrementCart();
 
     const incrementQuantity = ()=>{
-        increaseQuantity.mutate(id);
+        IncrementProduct(id);
     }
     const decrementQuantity = ()=>{
-        decreaseQuantity.mutate(id);
+        DecrementProduct(id);
     }
     return(
         <tr className="">

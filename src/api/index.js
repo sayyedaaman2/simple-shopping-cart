@@ -1,31 +1,23 @@
 
 
-export const fetchProducts = () => {
+export const fetchProducts = ({ pageParam=1 }) => {
     return new Promise((resolve, reject) => {
-        let data  = JSON.parse(localStorage.getItem('product'));
-        if(!data){
-            fetch('https://dummyjson.com/products')
-            .then(res => res.json())
-            .then(data => {
-               localStorage.setItem('product',JSON.stringify(data));
-                resolve(data);
-            })
-            .catch(error => reject(error));
-        }else{
-            resolve(data);
-        }
+        fetch(`https://dummyjson.com/products?limit=6&skip=${pageParam * 3}`)
+        .then(res => res.json())
+        .then(data => resolve(data))
+        .catch(error => reject(error));
 
-        
-        
+
     });
 }
 
 export const fetchCart = () => {
-    return new Promise((resolve)=>{
+    return new Promise((resolve) => {
         const cart = localStorage.getItem('cart');
         resolve(JSON.parse(cart));
     })
 }
+
 
 export const postCart = (product) => {
     return new Promise((resolve, reject) => {
@@ -42,7 +34,7 @@ export const postCart = (product) => {
             if (!productExists) {
                 updatedCart.push({
                     ...product,
-                    quantity : 1,
+                    quantity: 1,
                 });
             }
             localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -52,21 +44,21 @@ export const postCart = (product) => {
         }
     });
 }
-export const deleteCart= (productId)=>{
-    return new Promise((resolve,reject)=>{
-        try{
+export const deleteCart = (productId) => {
+    return new Promise((resolve, reject) => {
+        try {
             let cart = JSON.parse(localStorage.getItem('cart'));
             let updateCart = cart.filter((product) => product.id !== productId);
             localStorage.setItem('cart', JSON.stringify(updateCart));
             resolve(updateCart);
-        }catch(error){
+        } catch (error) {
             reject(error);
         }
     })
 }
-export const increaseProductCart= (productId)=>{
-    return new Promise((resolve,reject)=>{
-        try{
+export const increaseProductCart = (productId) => {
+    return new Promise((resolve, reject) => {
+        try {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let updatedCart = cart.map((product) => {
                 if (product.id === productId) {
@@ -76,7 +68,7 @@ export const increaseProductCart= (productId)=>{
             });
             localStorage.setItem('cart', JSON.stringify(updatedCart));
             resolve(updatedCart);
-        }catch(error){
+        } catch (error) {
             reject(error);
         }
     })

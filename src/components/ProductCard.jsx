@@ -1,4 +1,4 @@
-import { useCartQuery } from "../hooks/queryClient"
+import { useAddCart } from "../hooks/queryClient";
 import Button from "./common/Button"
 export default function ProductCard({
     id,
@@ -7,22 +7,23 @@ export default function ProductCard({
     description,
     image,
 }) {
-    const {addCart} = useCartQuery();
+    const {mutate:addCart} = useAddCart();
 
     function addToCart(){
-        console.log("add to cart")
-        addCart.mutate({
+        const product = {
             id,
             title,
             price,
             quantity : 0,
-        });
+        }
+        addCart(product);
 
     }
     return (
-        <div className="product-card bg-slate-200 border rounded-lg h-auto w-auto p-4 flex flex-col ">
+        <div className="product-card bg-slate-200 border rounded-lg  w-auto p-4 flex flex-col h-auto">
+           
             <div className="img-section flex-1">
-                <img src={image} alt="" loading="lazy" />
+                <img className="" src={image} alt="" loading="lazy" />
             </div>
             <div className="content-section flex flex-col gap-2">
                 <p className="text-md lg:text-xl">
@@ -39,6 +40,7 @@ export default function ProductCard({
                         Add to Cart
                     </Button>
                 </div>
+               
             </div>
         </div>
     )
